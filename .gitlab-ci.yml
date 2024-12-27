@@ -1,0 +1,30 @@
+# GitLab CI Configuration
+
+stages:
+  - setup
+  - test
+
+variables:
+  PYTHON_VERSION: "3.10"  # Specify Python version
+
+# Step 1: Set up the environment
+setup-python:
+  stage: setup
+  image: python:${PYTHON_VERSION}  # Use a Python Docker image
+  script:
+    - python --version
+    - pip install -r scripts/requirements.txt
+  artifacts:
+    paths:
+      - .venv/
+
+# Step 2: Test the upload_data script
+test-upload:
+  stage: test
+  image: python:${PYTHON_VERSION}  # Use a Python Docker image
+  script:
+    - python scripts/data_upload.py data/raw/sample_data.csv
+  only:
+    changes:
+      - scripts/upload_data.py
+      - data/raw/*
